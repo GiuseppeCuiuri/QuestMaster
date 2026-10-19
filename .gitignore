@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Secrets: API keys and local settings go in environment variables, never in the repository
+.env
+.env.*
+
+# Editors and IDEs
+.idea/
+.vscode/
+
+# Node packages (the game page loads React from a CDN)
+node_modules/
+
+# Operating system files
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Default output folder of run_flow (examples/output is kept as a sample)
+QuestMaster/output/
+
+# Logs
+*.log

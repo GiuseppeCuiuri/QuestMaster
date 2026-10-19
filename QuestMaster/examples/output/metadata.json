@@ -1,0 +1,164 @@
+{
+  "quest_data": {
+    "locations": [
+      "mistveil_hollow",
+      "sagebrush_ridge",
+      "whispering_woods",
+      "frostbite_falls",
+      "crystal_caverns",
+      "midnight_meadow",
+      "raven_s_peak",
+      "banshee_s_bend",
+      "glimmerglen",
+      "barren_barrow",
+      "luminous_lake"
+    ],
+    "items": [
+      "flame_of_eternity"
+    ],
+    "obstacles": {
+      "crystal_caverns": "golem"
+    },
+    "item_locations": {
+      "flame_of_eternity": "raven_s_peak"
+    },
+    "defeats": {
+      "flame_of_eternity": "golem"
+    },
+    "display_names": {
+      "crystal_caverns": "Crystal Caverns",
+      "golem": "golem",
+      "flame_of_eternity": "Flame of Eternity",
+      "mistveil_hollow": "Mistveil Hollow",
+      "sagebrush_ridge": "Sagebrush Ridge",
+      "whispering_woods": "Whispering Woods",
+      "frostbite_falls": "Frostbite Falls",
+      "midnight_meadow": "Midnight Meadow",
+      "raven_s_peak": "Raven's Peak",
+      "banshee_s_bend": "Banshee's Bend",
+      "glimmerglen": "Glimmerglen",
+      "barren_barrow": "Barren Barrow",
+      "luminous_lake": "Luminous Lake"
+    },
+    "descriptions": {
+      "golem": "The entrance is sealed by an ancient golem that awakens when intruders approach",
+      "mistveil_hollow": "Pale fog coils between leaning stones that seem to whisper your name.",
+      "sagebrush_ridge": "The wind carries the scent of dried sage as you crest the ridge, revealing a vista of forgotten ruins.",
+      "whispering_woods": "The trees seem to murmur ancient secrets as you pass, their branches tangling above you like skeletal fingers.",
+      "frostbite_falls": "Icy mist rises from the waterfall, stinging your skin and making you shiver as you hurry past.",
+      "midnight_meadow": "The full moon casts an eerie glow over the meadow, where wildflowers sway in the darkness like spectral dancers.",
+      "raven_s_peak": "The wind whispers eerie melodies as you climb the peak, where a murder of ravens watches your every move.",
+      "banshee_s_bend": "The wail of a distant siren echoes through the bend, making your heart race as you quicken your pace.",
+      "glimmerglen": "Fireflies dance in the underbrush, casting a soft, luminescent glow that guides you through the treacherous terrain.",
+      "barren_barrow": "A sea of gray stones stretches out before you, the silence so profound it feels like a physical weight.",
+      "luminous_lake": "The lake's surface shimmers like polished silver, reflecting the stars above and casting an otherworldly glow across the surrounding trees."
+    },
+    "connections": [
+      [
+        "mistveil_hollow",
+        "sagebrush_ridge"
+      ],
+      [
+        "mistveil_hollow",
+        "midnight_meadow"
+      ],
+      [
+        "mistveil_hollow",
+        "raven_s_peak"
+      ],
+      [
+        "sagebrush_ridge",
+        "whispering_woods"
+      ],
+      [
+        "sagebrush_ridge",
+        "banshee_s_bend"
+      ],
+      [
+        "whispering_woods",
+        "frostbite_falls"
+      ],
+      [
+        "whispering_woods",
+        "glimmerglen"
+      ],
+      [
+        "frostbite_falls",
+        "crystal_caverns"
+      ],
+      [
+        "frostbite_falls",
+        "barren_barrow"
+      ],
+      [
+        "frostbite_falls",
+        "luminous_lake"
+      ],
+      [
+        "sagebrush_ridge",
+        "mistveil_hollow"
+      ],
+      [
+        "midnight_meadow",
+        "mistveil_hollow"
+      ],
+      [
+        "raven_s_peak",
+        "mistveil_hollow"
+      ],
+      [
+        "whispering_woods",
+        "sagebrush_ridge"
+      ],
+      [
+        "banshee_s_bend",
+        "sagebrush_ridge"
+      ],
+      [
+        "frostbite_falls",
+        "whispering_woods"
+      ],
+      [
+        "glimmerglen",
+        "whispering_woods"
+      ],
+      [
+        "crystal_caverns",
+        "frostbite_falls"
+      ],
+      [
+        "barren_barrow",
+        "frostbite_falls"
+      ],
+      [
+        "luminous_lake",
+        "frostbite_falls"
+      ]
+    ],
+    "initial_location": "mistveil_hollow",
+    "goal_conditions": [
+      "at hero crystal_caverns",
+      "has hero flame_of_eternity",
+      "defeated golem"
+    ],
+    "branching_factor": {
+      "min": 2,
+      "max": 4
+    },
+    "depth_constraints": {
+      "min": 3,
+      "max": 8
+    }
+  },
+  "branching_factor": {
+    "min": 2,
+    "max": 4
+  },
+  "depth_constraints": {
+    "min": 3,
+    "max": 8
+  },
+  "iterations": 0,
+  "status": "success",
+  "validation_error": null
+}

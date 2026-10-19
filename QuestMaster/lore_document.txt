@@ -1,0 +1,12 @@
+=== LORE DOCUMENT ===
+
+QUEST DESCRIPTION:
+The brave knight must journey to the Crystal Caverns carrying the Flame of Eternity and shatter the Dark Crystal. The entrance is sealed by an ancient golem that awakens when intruders approach.
+
+BRANCHING FACTOR:
+Minimum: 2
+Maximum: 4
+
+DEPTH CONSTRAINTS:
+Minimum: 3
+Maximum: 8

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QuestMaster</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=EB+Garamond:ital@0;1&display=swap">
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+  <style>
+    body { font-family: "EB Garamond", Georgia, serif; font-size: 18px; }
+    .title { font-family: "Cinzel", Georgia, serif; }
+  </style>
+</head>
+<body class="bg-stone-950 text-stone-200">
+  <div id="root"></div>
+  <script>window.QUEST = __QUEST_DATA__;</script>
+  <script type="text/babel" data-presets="react">
+    const { useState } = React;
+    const meta = window.QUEST.meta;
+    const quest = meta.quest_data;
+    const legend = window.QUEST.narrative.split(/\n\s*\n/).filter((p) => p.trim());
+    const nameOf = (id) => quest.display_names[id] || id.replace(/_/g, " ");
+    const descriptionOf = (id) => quest.descriptions[id] || "";
+    // Goal conditions are PDDL atoms without parentheses, e.g. "at hero crystal_caverns".
+    const destination = quest.goal_conditions[0].split(" ")[2];
+    const goalText = (condition) => {
+      const [predicate, ...args] = condition.split(" ");
+      if (predicate === "at") return `Reach ${nameOf(args[1])}`;
+      if (predicate === "has") return `Claim the ${nameOf(args[1])}`;
+      if (predicate === "defeated") return `Defeat the ${nameOf(args[0])}`;
+      return condition;
+    };
+    const button = "px-4 py-2 rounded-lg border transition disabled:opacity-40 disabled:cursor-not-allowed";
+
+    function App() {
+      const [here, setHere] = useState(quest.initial_location);
+      const [inventory, setInventory] = useState([]);
+      const [defeated, setDefeated] = useState([]);
+      const [journal, setJournal] = useState([`You set out from ${nameOf(quest.initial_location)}.`]);
+      const steps = journal.length - 1;  // one journal entry per action, like one PDDL action
+      const record = (entry) => setJournal([...journal, entry]);
+
+      // Same rules as the PDDL domain: a guarded place can't be entered until its guardian is
+      // defeated from a neighbouring place, using the treasure that defeats it.
+      const paths = [...new Set(quest.connections.filter(([from]) => from === here).map(([, to]) => to))];
+      const guardOf = (place) => {
+        const obstacle = quest.obstacles[place];
+        return obstacle && !defeated.includes(obstacle) ? obstacle : null;
+      };
+      const weaponAgainst = (obstacle) => inventory.find((item) => quest.defeats[item] === obstacle);
+      const itemsHere = Object.entries(quest.item_locations)
+        .filter(([item, place]) => place === here && !inventory.includes(item))
+        .map(([item]) => item);
+      const threats = paths.map(guardOf).filter(Boolean);
+
+      const holds = (condition) => {
+        const [predicate, ...args] = condition.split(" ");
+        if (predicate === "at") return here === args[1];
+        if (predicate === "defeated") return defeated.includes(args[0]);
+        if (predicate === "has") return inventory.includes(args[1]);
+        return false;
+      };
+      const victory = quest.goal_conditions.every(holds);
+
+      const move = (place) => { setHere(place); record(`You travel to ${nameOf(place)}.`); };
+      const take = (item) => { setInventory([...inventory, item]); record(`You claim the ${nameOf(item)}.`); };
+      const fight = (obstacle, place) => {
+        setDefeated([...defeated, obstacle]);
+        record(`You wield the ${nameOf(weaponAgainst(obstacle))} against the ${nameOf(obstacle)}. The way to ${nameOf(place)} lies open.`);
+      };
+
+      return (
+        <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+          <header className="text-center">
+            <p className="uppercase tracking-[0.3em] text-xs text-amber-600">QuestMaster</p>
+            <h1 className="title text-3xl sm:text-4xl text-amber-300 mt-2">The Quest for {nameOf(destination)}</h1>
+          </header>
+
+          {victory ? (
+            <section className="rounded-xl border border-amber-500/50 bg-amber-950/40 p-6 space-y-4">
+              <h2 className="title text-2xl text-amber-300">Victory!</h2>
+              <p className="text-lg">
+                {!meta.optimal_steps ? `You triumphed in ${steps} steps.`
+                  : steps <= meta.optimal_steps ? `You walked the path of legend in ${steps} steps, without a single wasted stride.`
+                  : `You triumphed in ${steps} steps. The legend tells of a path of only ${meta.optimal_steps}: can you match it?`}
+              </p>
+              <h3 className="title text-lg text-amber-200 pt-2">The Legend</h3>
+              {legend.map((p, i) => <p key={i} className="leading-relaxed">{p}</p>)}
+              <button onClick={() => window.location.reload()} className={`${button} border-amber-500 text-amber-200 hover:bg-amber-900/50`}>
+                Play again
+              </button>
+            </section>
+          ) : (
+            <>
+              {legend[0] && steps === 0 && (
+                <p className="italic text-stone-400 text-lg leading-relaxed border-l-2 border-amber-700 pl-4">{legend[0]}</p>
+              )}
+
+              <section className="rounded-xl border border-stone-700 bg-stone-900 p-6 space-y-5">
+                <div>
+                  <p className="text-xs uppercase tracking-widest text-stone-500">You stand at</p>
+                  <h2 className="title text-2xl text-amber-200 mt-1">{nameOf(here)}</h2>
+                  {descriptionOf(here) && <p className="mt-2 text-lg leading-relaxed">{descriptionOf(here)}</p>}
+                </div>
+
+                {itemsHere.map((item) => (
+                  <div key={item} className="rounded-lg border border-amber-700/60 bg-amber-950/40 p-4">
+                    <p>Something glimmers here: the <strong className="text-amber-200">{nameOf(item)}</strong>.</p>
+                    <button onClick={() => take(item)} className={`${button} mt-3 border-amber-500 text-amber-200 hover:bg-amber-900/50`}>
+                      Take the {nameOf(item)}
+                    </button>
+                  </div>
+                ))}
+
+                {threats.map((obstacle) => (
+                  <div key={obstacle} className="rounded-lg border border-red-800 bg-red-950/40 p-4">
+                    <p className="text-red-200">{descriptionOf(obstacle) || `The ${nameOf(obstacle)} bars the way.`}</p>
+                    {!weaponAgainst(obstacle) && (
+                      <p className="mt-2 text-sm italic text-red-300/80">You are not ready to face it. Something hidden along these roads could turn the tide.</p>
+                    )}
+                  </div>
+                ))}
+
+                <div>
+                  <p className="text-xs uppercase tracking-widest text-stone-500 mb-2">Roads from here</p>
+                  <div className="flex flex-wrap gap-2">
+                    {paths.map((place) => {
+                      const obstacle = guardOf(place);
+                      return obstacle ? (
+                        <button key={place} disabled={!weaponAgainst(obstacle)} onClick={() => fight(obstacle, place)}
+                                className={`${button} border-red-700 text-red-200 hover:bg-red-900/50`}>
+                          ⚔ Face the {nameOf(obstacle)} at {nameOf(place)}
+                        </button>
+                      ) : (
+                        <button key={place} onClick={() => move(place)}
+                                className={`${button} border-stone-600 text-stone-100 hover:bg-stone-800`}>
+                          → {nameOf(place)}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </section>
+            </>
+          )}
+
+          <section className="grid sm:grid-cols-2 gap-4">
+            <div className="rounded-xl border border-stone-800 p-4">
+              <h3 className="title text-amber-200 mb-2">Quest</h3>
+              <ul className="space-y-1">
+                {quest.goal_conditions.map((condition) => (
+                  <li key={condition} className={holds(condition) ? "text-emerald-400" : ""}>
+                    {holds(condition) ? "✓" : "○"} {goalText(condition)}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-3 text-sm text-stone-400">Pack: {inventory.length ? inventory.map(nameOf).join(", ") : "empty"}</p>
+              <p className="text-sm text-stone-400">
+                Steps: {steps}{meta.optimal_steps ? ` · the legend: ${meta.optimal_steps}` : ""}
+              </p>
+            </div>
+            <div className="rounded-xl border border-stone-800 p-4">
+              <h3 className="title text-amber-200 mb-2">Journal</h3>
+              <ol className="text-sm text-stone-400 space-y-1 max-h-48 overflow-y-auto">
+                {[...journal].reverse().map((entry, i) => <li key={i}>{entry}</li>)}
+              </ol>
+            </div>
+          </section>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

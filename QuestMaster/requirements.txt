@@ -1,0 +1,7 @@
+# Lower bounds are the versions last run successfully (Python 3.13).
+# Fast Downward is installed separately: see FAST_DOWNWARD_PATH in quest_master/validators/pddl_validator.py.
+langchain-core>=0.3.70
+langchain-ollama>=0.3.5
+langgraph>=0.5.4
+ollama>=0.5.1
+pydantic>=2.11.7
