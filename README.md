@@ -4,7 +4,15 @@ QuestMaster turns a short lore document into a playable fantasy quest. A local L
 Fast Downward planner validates the quest as a PDDL planning problem and finds its optimal solution, and the
 pipeline writes a story that follows that solution plus an interactive web game with the same rules.
 
-It was built for an Artificial Intelligence course, to combine classical planning with language models.
+It was built to combine classical planning with language models.
+
+## Authors
+
+- [Giuseppe Cuiuri](https://github.com/GiuseppeCuiuri)
+- [Davide Cinelli](https://github.com/davidecinelli26)
+
+Developed for the *Artificial Intelligence* course, MSc in Computer Engineering, University of
+Calabria, A.Y. 2024/2025.
 
 ## How it works
 
